@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alarma de 30 Minutos</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f2f5;
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        #timer {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #1a73e8;
+            margin: 20px 0;
+        }
+        button {
+            padding: 10px 25px;
+            font-size: 1rem;
+            cursor: pointer;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        button:disabled {
+            background-color: #ccc;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Temporizador</h2>
+    <div id="timer">30:00</div>
+    <button id="startBtn" onclick="startTimer()">Iniciar Alarma</button>
+    <p id="status" style="margin-top: 15px; color: #666;"></p>
+</div>
+
+<audio id="alarmSound" src="https://actions.google.com/sounds/v1/alarms/beep_loop.ogg" preload="auto"></audio>
+
+<script>
+    let timeLeft = 30 * 60; // 30 minutos en segundos
+    let timerId = null;
+
+    function updateDisplay() {
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        document.getElementById('timer').innerText = 
+            `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+        if (timerId) return; // Evitar múltiples clics
+
+        document.getElementById('startBtn').disabled = true;
+        document.getElementById('status').innerText = "La alarma sonará en 30 minutos.";
+
+        timerId = setInterval(() => {
+            timeLeft--;
+            updateDisplay();
+
+            if (timeLeft <= 0) {
+                clearInterval(timerId);
+                playAlarm();
+            }
+        }, 1000);
+    }
+
+    function playAlarm() {
+        const sound = document.getElementById('alarmSound');
+        sound.play();
+        alert("¡Tiempo cumplido!");
+        
+        // Opción para resetear
+        location.reload(); 
+    }
+</script>
+
+</body>
+</html>
